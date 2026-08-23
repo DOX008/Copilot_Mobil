@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:title="AI Copilot" />
+
+        <item
+            android:id="@+id/nav_gemini"
+            android:title="AI Gemini" />
+
+        <item
+            android:id="@+id/nav_chatgpt"
+            android:title="AI ChatGPT" />
+
+        <item
+            android:id="@+id/nav_googles"
+            android:title="Google sök" />
+
+        <item
+            android:id="@+id/nav_duckduckgo"
+            android:title="duckdgo sök" />
+
+        <item
+            android:id="@+id/nav_anotepad"
+            android:title="Anotepad" />
+
+        <item
+            android:id="@+id/nav_cardscanner"
+            android:title="Image to txt" />
+
+    </group>
+</menu>

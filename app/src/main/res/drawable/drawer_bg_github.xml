@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <!-- Mörk bakgrund lik GitHub dark -->
+    <solid android:color="#0D1117" />
+
+    <!-- Tunn ram -->
+    <stroke
+        android:width="1dp"
+        android:color="#30363D" />
+
+    <!-- Lite rundade hörn (valfritt). Sätt 0dp om du vill ha helt fyrkantigt -->
+    <corners android:radius="8dp" />
+
+    <!-- Lite padding så text inte ligger kloss mot kanten -->
+    <padding
+        android:left="6dp"
+        android:top="6dp"
+        android:right="6dp"
+        android:bottom="6dp" />
+</shape>

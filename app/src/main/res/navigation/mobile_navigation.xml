@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.alex.image.copilot.ui.home.HomeFragment"
+        android:label="copilot"
+        tools:layout="@layout/fragment_home">
+        <argument
+            android:name="url"
+            app:argType="string"
+            android:defaultValue="https://github.com/copilot" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_gemini"
+        android:name="com.alex.image.copilot.ui.home.HomeFragment"
+        android:label="Gemini"
+        tools:layout="@layout/fragment_home">
+        <argument
+            android:name="url"
+            app:argType="string"
+            android:defaultValue="https://google.com/search?sca_esv=f310ec5ab07cd165&amp;udm=50&amp;aep=95&amp;ved=0ahUKEwiS-qOm4pmUAxUCQ_EDHe-pGwoQvuQRCBA" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_chatgpt"
+        android:name="com.alex.image.copilot.ui.home.HomeFragment"
+        android:label="ChatGPT"
+        tools:layout="@layout/fragment_home">
+        <argument
+            android:name="url"
+            app:argType="string"
+            android:defaultValue="https://chatgpt.com/?temporary-chat=true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_googles"
+        android:name="com.alex.image.copilot.ui.home.HomeFragment"
+        android:label="Google"
+        tools:layout="@layout/fragment_home">
+        <argument
+            android:name="url"
+            app:argType="string"
+            android:defaultValue="https://google.com" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_duckduckgo"
+        android:name="com.alex.image.copilot.ui.home.HomeFragment"
+        android:label="DuckGo"
+        tools:layout="@layout/fragment_home">
+        <argument
+            android:name="url"
+            app:argType="string"
+            android:defaultValue="https://duckduckgo.com" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_anotepad"
+        android:name="com.alex.image.copilot.ui.home.HomeFragment"
+        android:label="Anotepad"
+        tools:layout="@layout/fragment_home">
+        <argument
+            android:name="url"
+            app:argType="string"
+            android:defaultValue="https://anotepad.com" />
+    </fragment>
+
+    <!-- NY: CardScanner -->
+    <fragment
+        android:id="@+id/nav_cardscanner"
+        android:name="com.alex.image.copilot.ui.home.HomeFragment"
+        android:label="CardScanner"
+        tools:layout="@layout/fragment_home">
+        <argument
+            android:name="url"
+            app:argType="string"
+            android:defaultValue="https://www.cardscanner.co/image-to-text" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_gallery"
+        android:name="com.alex.image.copilot.ui.gallery.GalleryFragment"
+        android:label="@string/menu_gallery"
+        tools:layout="@layout/fragment_gallery" />
+
+    <fragment
+        android:id="@+id/nav_slideshow"
+        android:name="com.alex.image.copilot.ui.slideshow.SlideshowFragment"
+        android:label="@string/menu_slideshow"
+        tools:layout="@layout/fragment_slideshow" />
+</navigation>
