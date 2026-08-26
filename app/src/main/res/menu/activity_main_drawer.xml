@@ -5,16 +5,16 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_home"
-            android:title="AI Copilot" />
+            android:id="@+id/nav_medvind"
+            android:title="Medvind" />
 
         <item
-            android:id="@+id/nav_gemini"
-            android:title="AI Gemini" />
+            android:id="@+id/nav_orncom"
+            android:title="ÖrnCom" />
 
         <item
-            android:id="@+id/nav_chatgpt"
-            android:title="AI ChatGPT" />
+            android:id="@+id/nav_anotepad"
+            android:title="OnlineNotepad.io" />
 
         <item
             android:id="@+id/nav_googles"
@@ -25,12 +25,19 @@
             android:title="duckdgo sök" />
 
         <item
-            android:id="@+id/nav_anotepad"
-            android:title="Anotepad" />
-
-        <item
             android:id="@+id/nav_cardscanner"
             android:title="Image to txt" />
 
+        <item
+            android:id="@+id/nav_home"
+            android:title="Github AI" />
+
+        <item
+            android:id="@+id/nav_gemini"
+            android:title="Gemini AI" />
+
+        <item
+            android:id="@+id/nav_chatgpt"
+            android:title="ChatGPT AI" />
     </group>
 </menu>

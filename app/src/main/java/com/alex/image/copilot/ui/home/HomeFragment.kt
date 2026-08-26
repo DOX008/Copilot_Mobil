@@ -39,7 +39,7 @@ class HomeFragment : Fragment() {
 
     private fun isAdBlockEnabledFor(url: String): Boolean {
         val host = runCatching { Uri.parse(url).host?.lowercase() }.getOrNull() ?: return false
-        return host == "anotepad.com" || host.endsWith(".anotepad.com")
+        return host == "onlinenotepad.io" || host.endsWith(".onlinenotepad.io")
     }
 
     @SuppressLint("SetJavaScriptEnabled")
