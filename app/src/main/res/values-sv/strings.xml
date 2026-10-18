@@ -1,0 +1,24 @@
+<resources>
+    <string name="menu_extensions">Tillägg</string>
+    <string name="extensions_manage">Hantera tillägg</string>
+    <string name="extensions_installed_title">Installerade tillägg</string>
+    <string name="extensions_empty">Inga tillägg installerade</string>
+    <string name="extensions_close">Stäng</string>
+    <string name="extensions_remove">Ta bort</string>
+    <string name="extensions_enabled">Aktiverat</string>
+    <string name="extensions_disabled">Inaktiverat</string>
+    <string name="extensions_version">Version %1$s</string>
+    <string name="extensions_unnamed">Namnlöst tillägg</string>
+    <string name="extensions_remove_title">Ta bort tillägg?</string>
+    <string name="extensions_remove_message">Vill du ta bort %1$s?</string>
+    <string name="extensions_install_title">Lägg till %1$s?</string>
+    <string name="extensions_install_message">Tillägget kräver följande behörigheter:</string>
+    <string name="extensions_install_no_permissions">Tillägget kräver inga särskilda behörigheter.</string>
+    <string name="extensions_install_add">Lägg till</string>
+    <string name="extensions_cancel">Avbryt</string>
+    <string name="extensions_installed_toast">%1$s installerades</string>
+    <string name="extensions_removed_toast">%1$s togs bort</string>
+    <string name="extensions_load_failed">Kunde inte läsa in tillägg</string>
+    <string name="extensions_uninstall_failed">Kunde inte ta bort tillägget</string>
+    <string name="extensions_toggle_failed">Kunde inte ändra tilläggets läge</string>
+</resources>

@@ -14,6 +14,8 @@ class CopilotApplication : Application() {
         val settings = GeckoRuntimeSettings.Builder()
             .remoteDebuggingEnabled(debuggable)
             .javaScriptEnabled(true)
+            // Krävs för att kunna installera tillägg från addons.mozilla.org
+            .extensionsWebAPIEnabled(true)
             .build()
 
         GeckoRuntime.create(this, settings).also { runtime ->

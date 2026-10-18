@@ -10,4 +10,27 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+
+    <string name="menu_extensions">Extensions</string>
+    <string name="extensions_manage">Manage extensions</string>
+    <string name="extensions_installed_title">Installed extensions</string>
+    <string name="extensions_empty">No extensions installed</string>
+    <string name="extensions_close">Close</string>
+    <string name="extensions_remove">Remove</string>
+    <string name="extensions_enabled">Enabled</string>
+    <string name="extensions_disabled">Disabled</string>
+    <string name="extensions_version">Version %1$s</string>
+    <string name="extensions_unnamed">Unnamed extension</string>
+    <string name="extensions_remove_title">Remove extension?</string>
+    <string name="extensions_remove_message">Do you want to remove %1$s?</string>
+    <string name="extensions_install_title">Add %1$s?</string>
+    <string name="extensions_install_message">This extension requires the following permissions:</string>
+    <string name="extensions_install_no_permissions">This extension requires no special permissions.</string>
+    <string name="extensions_install_add">Add</string>
+    <string name="extensions_cancel">Cancel</string>
+    <string name="extensions_installed_toast">%1$s was installed</string>
+    <string name="extensions_removed_toast">%1$s was removed</string>
+    <string name="extensions_load_failed">Could not load extensions</string>
+    <string name="extensions_uninstall_failed">Could not remove the extension</string>
+    <string name="extensions_toggle_failed">Could not change the extension state</string>
 </resources>

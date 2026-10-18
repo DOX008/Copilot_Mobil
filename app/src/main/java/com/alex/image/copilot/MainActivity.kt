@@ -41,7 +41,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_cardscanner,
                 R.id.nav_home,
                 R.id.nav_gemini,
-                R.id.nav_chatgpt
+                R.id.nav_chatgpt,
+                R.id.nav_extensions
             ),
             drawerLayout
         )

@@ -116,4 +116,10 @@
             app:argType="string"
             android:defaultValue="https://chatgpt.com/?temporary-chat=true" />
     </fragment>
+
+    <fragment
+        android:id="@+id/nav_extensions"
+        android:name="com.alex.image.copilot.ui.extensions.ExtensionsFragment"
+        android:label="@string/menu_extensions"
+        tools:layout="@layout/fragment_extensions" />
 </navigation>
