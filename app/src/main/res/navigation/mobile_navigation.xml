@@ -83,6 +83,17 @@
     </fragment>
 
     <fragment
+        android:id="@+id/nav_abacus"
+        android:name="com.alex.image.copilot.ui.home.HomeFragment"
+        android:label="Abacus.AI"
+        tools:layout="@layout/fragment_home">
+        <argument
+            android:name="url"
+            app:argType="string"
+            android:defaultValue="https://apps.abacus.ai" />
+    </fragment>
+
+    <fragment
         android:id="@+id/nav_gemini"
         android:name="com.alex.image.copilot.ui.home.HomeFragment"
         android:label="Gemini AI"

@@ -33,6 +33,10 @@
             android:title="Github AI" />
 
         <item
+            android:id="@+id/nav_abacus"
+            android:title="Abacus.AI" />
+
+        <item
             android:id="@+id/nav_gemini"
             android:title="Gemini AI" />
 
