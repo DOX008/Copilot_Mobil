@@ -28,6 +28,18 @@
     </fragment>
 
     <fragment
+        android:id="@+id/nav_abacus"
+        android:name="com.alex.image.copilot.ui.home.HomeFragment"
+        android:label="E-tillsyn"
+        tools:layout="@layout/fragment_home">
+        <argument
+            android:name="url"
+            app:argType="string"
+            android:defaultValue="https://mhvlifecare.ornskoldsvik.se/PhoniroCare-ET/SingleSignOn?ReturnUrl=%2fphonirocare-et" />
+    </fragment>
+
+
+    <fragment
         android:id="@+id/nav_anotepad"
         android:name="com.alex.image.copilot.ui.home.HomeFragment"
         android:label="OnlineNotepad"
@@ -82,16 +94,6 @@
             android:defaultValue="https://github.com/copilot" />
     </fragment>
 
-    <fragment
-        android:id="@+id/nav_abacus"
-        android:name="com.alex.image.copilot.ui.home.HomeFragment"
-        android:label="Abacus.AI"
-        tools:layout="@layout/fragment_home">
-        <argument
-            android:name="url"
-            app:argType="string"
-            android:defaultValue="https://apps.abacus.ai" />
-    </fragment>
 
     <fragment
         android:id="@+id/nav_gemini"

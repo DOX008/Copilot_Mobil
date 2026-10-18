@@ -13,6 +13,10 @@
             android:title="ÖrnCom" />
 
         <item
+            android:id="@+id/nav_abacus"
+            android:title="E-tillsyn" />
+
+        <item
             android:id="@+id/nav_anotepad"
             android:title="OnlineNotepad.io" />
 
@@ -31,10 +35,6 @@
         <item
             android:id="@+id/nav_home"
             android:title="Github AI" />
-
-        <item
-            android:id="@+id/nav_abacus"
-            android:title="Abacus.AI" />
 
         <item
             android:id="@+id/nav_gemini"
