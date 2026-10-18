@@ -1,9 +1,12 @@
 package com.alex.image.copilot.ui.extensions
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -13,6 +16,7 @@ import com.alex.image.copilot.databinding.FragmentExtensionsBinding
 import com.alex.image.copilot.ui.home.GeckoSessionViewModel
 import org.mozilla.geckoview.AllowOrDeny
 import org.mozilla.geckoview.GeckoResult
+import org.mozilla.geckoview.GeckoSession
 import org.mozilla.geckoview.WebExtension
 import org.mozilla.geckoview.WebExtensionController
 
@@ -44,6 +48,9 @@ class ExtensionsFragment : Fragment() {
 
         val session = sessionHolder.ensureOpen()
         binding.geckoView.setSession(session)
+
+        session.navigationDelegate = navigationDelegate
+
         if (!sessionHolder.started) {
             sessionHolder.started = true
             session.loadUri(AMO_URL)
@@ -54,52 +61,126 @@ class ExtensionsFragment : Fragment() {
                 ExtensionsDialogFragment().show(childFragmentManager, ExtensionsDialogFragment.TAG)
             }
         }
+
+        binding.fabManage.setOnLongClickListener {
+            installGhosteryDirectly()
+            true
+        }
+    }
+
+    private val navigationDelegate = object : GeckoSession.NavigationDelegate {
+        override fun onLoadRequest(session: GeckoSession, request: GeckoSession.NavigationDelegate.LoadRequest): GeckoResult<AllowOrDeny>? {
+            val url = request.uri
+            if (url.contains("addon/ghostery")) {
+                activity?.runOnUiThread {
+                    installGhosteryDirectly()
+                }
+                return GeckoResult.fromValue(AllowOrDeny.DENY)
+            }
+            return GeckoResult.fromValue(AllowOrDeny.ALLOW)
+        }
+    }
+
+    private fun installGhosteryDirectly() {
+        Toast.makeText(context, "Hämtar och installerar Ghostery...", Toast.LENGTH_SHORT).show()
+
+        // HÄR SKA DEN IN (Rad 73) - Ändrad från "https://mozilla.org" till direktlänken
+        val ghosteryXpiUrl = "https://mozilla.org"
+
+        controller.install(ghosteryXpiUrl).then(
+            { extension ->
+                activity?.runOnUiThread {
+                    Toast.makeText(context, "Ghostery installerades framgångsrikt!", Toast.LENGTH_LONG).show()
+                }
+                GeckoResult.fromValue(extension)
+            },
+            { throwable ->
+                activity?.runOnUiThread {
+                    Toast.makeText(context, "Installationsfel: " + throwable.message, Toast.LENGTH_LONG).show()
+                }
+                GeckoResult.fromValue(null)
+            }
+        )
     }
 
     private var pendingDialog: AlertDialog? = null
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     private val promptDelegate = object : WebExtensionController.PromptDelegate {
         override fun onInstallPromptRequest(
-            extension: WebExtension,
-            permissions: Array<String>,
-            origins: Array<String>
-        ): GeckoResult<WebExtension.PermissionPromptResponse> {
+            p0: WebExtension,
+            p1: Array<out String>,
+            p2: Array<out String>,
+            p3: Array<out String>
+        ): GeckoResult<WebExtension.PermissionPromptResponse>? {
             val result = GeckoResult<WebExtension.PermissionPromptResponse>()
+
+            val permissionsList = p1.map { it }
+            val originsList = p2.map { it }
+            val dataCollectionList = p3.map { it }
+            val allPerms = permissionsList + originsList + dataCollectionList
+
             confirm(
-                extension, permissions + origins,
-                onAllow = { result.complete(WebExtension.PermissionPromptResponse(true, false)) },
-                onDeny = { result.complete(WebExtension.PermissionPromptResponse(false, false)) }
+                p0,
+                allPerms,
+                onAllow = {
+                    mainHandler.post {
+                        result.complete(WebExtension.PermissionPromptResponse(true, false, false))
+                    }
+                },
+                onDeny = {
+                    mainHandler.post {
+                        result.complete(WebExtension.PermissionPromptResponse(false, false, false))
+                    }
+                }
             )
             return result
         }
 
         override fun onUpdatePrompt(
-            currentlyInstalled: WebExtension,
-            updatedExtension: WebExtension,
-            newPermissions: Array<String>,
-            newOrigins: Array<String>
-        ): GeckoResult<AllowOrDeny> = allowOrDeny(updatedExtension, newPermissions + newOrigins)
+            p0: WebExtension,
+            p1: Array<out String>,
+            p2: Array<out String>,
+            p3: Array<out String>
+        ): GeckoResult<AllowOrDeny>? {
+            val permissionsList = p1.map { it }
+            val originsList = p2.map { it }
+            val dataCollectionList = p3.map { it }
+            val allPerms = permissionsList + originsList + dataCollectionList
+
+            val result = GeckoResult<AllowOrDeny>()
+            confirm(
+                p0, allPerms,
+                onAllow = { mainHandler.post { result.complete(AllowOrDeny.ALLOW) } },
+                onDeny = { mainHandler.post { result.complete(AllowOrDeny.DENY) } }
+            )
+            return result
+        }
 
         override fun onOptionalPrompt(
-            extension: WebExtension,
-            permissions: Array<String>,
-            origins: Array<String>
-        ): GeckoResult<AllowOrDeny> = allowOrDeny(extension, permissions + origins)
-    }
+            p0: WebExtension,
+            p1: Array<out String>,
+            p2: Array<out String>,
+            p3: Array<out String>
+        ): GeckoResult<AllowOrDeny>? {
+            val permissionsList = p1.map { it }
+            val originsList = p2.map { it }
+            val dataCollectionList = p3.map { it }
+            val allPerms = permissionsList + originsList + dataCollectionList
 
-    private fun allowOrDeny(extension: WebExtension, perms: Array<String>): GeckoResult<AllowOrDeny> {
-        val result = GeckoResult<AllowOrDeny>()
-        confirm(
-            extension, perms,
-            onAllow = { result.complete(AllowOrDeny.ALLOW) },
-            onDeny = { result.complete(AllowOrDeny.DENY) }
-        )
-        return result
+            val result = GeckoResult<AllowOrDeny>()
+            confirm(
+                p0, allPerms,
+                onAllow = { mainHandler.post { result.complete(AllowOrDeny.ALLOW) } },
+                onDeny = { mainHandler.post { result.complete(AllowOrDeny.DENY) } }
+            )
+            return result
+        }
     }
 
     private fun confirm(
         extension: WebExtension,
-        perms: Array<String>,
+        perms: List<String>,
         onAllow: () -> Unit,
         onDeny: () -> Unit
     ) {
@@ -113,7 +194,7 @@ class ExtensionsFragment : Fragment() {
             getString(R.string.extensions_install_no_permissions)
         } else {
             getString(R.string.extensions_install_message) + "\n\n" +
-                perms.joinToString("\n") { "• $it" }
+                    perms.joinToString("\n") { "• $it" }
         }
         pendingDialog?.dismiss()
         pendingDialog = AlertDialog.Builder(ctx)
@@ -132,12 +213,13 @@ class ExtensionsFragment : Fragment() {
         controller.promptDelegate = null
         pendingDialog?.dismiss()
         pendingDialog = null
+        mainHandler.removeCallbacksAndMessages(null)
         binding.geckoView.releaseSession()
         _binding = null
         super.onDestroyView()
     }
 
     companion object {
-        private const val AMO_URL = "https://addons.mozilla.org/en-US/firefox/"
+        private const val AMO_URL = "https://addons.mozilla.org/en-US/firefox/addon"
     }
 }
