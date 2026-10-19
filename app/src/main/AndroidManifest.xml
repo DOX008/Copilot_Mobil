@@ -28,6 +28,16 @@
         android:roundIcon="@drawable/outline_webhook_24"
         android:supportsRtl="true"
         android:theme="@style/Theme.Copilot">
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

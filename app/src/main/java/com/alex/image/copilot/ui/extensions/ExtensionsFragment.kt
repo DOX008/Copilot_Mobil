@@ -3,6 +3,7 @@ package com.alex.image.copilot.ui.extensions
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.alex.image.copilot.CopilotApplication
+import com.alex.image.copilot.ExtensionInstaller
 import com.alex.image.copilot.R
 import com.alex.image.copilot.databinding.FragmentExtensionsBinding
 import com.alex.image.copilot.ui.home.GeckoSessionViewModel
@@ -32,6 +34,16 @@ class ExtensionsFragment : Fragment() {
         get() = (requireActivity().application as CopilotApplication)
             .geckoRuntime.webExtensionController
 
+    private val mainHandler = Handler(Looper.getMainLooper())
+
+    private val requiredExtensions = listOf(
+        Pair("Dark Reader", "https://addons.mozilla.org/firefox/downloads/file/5055786/darkreader-4.9.133.xpi"),
+        Pair("Ghostery", "https://addons.mozilla.org/firefox/downloads/file/5122014/ghostery-10.6.8.xpi")
+    )
+
+    private var checkedOnThisView = false
+    private var lastUrl: String? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -44,17 +56,36 @@ class ExtensionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Sätt promptDelegate först så att installer kan visa permissions-dialoger
         controller.promptDelegate = promptDelegate
 
         val session = sessionHolder.ensureOpen()
         binding.geckoView.setSession(session)
 
-        session.navigationDelegate = navigationDelegate
+        session.progressDelegate = object : GeckoSession.ProgressDelegate {
+            override fun onPageStart(session: GeckoSession, url: String) {
+                lastUrl = url
+            }
 
-        if (!sessionHolder.started) {
-            sessionHolder.started = true
-            session.loadUri(AMO_URL)
+            override fun onPageStop(session: GeckoSession, success: Boolean) {
+                if (!success) return
+                val urlNow = lastUrl ?: ""
+                if (!checkedOnThisView && urlNow.contains("addons.mozilla.org")) {
+                    checkedOnThisView = true
+                    Log.i(TAG, "AMO page loaded, checking installed extensions")
+                    checkAndInstallMissingExtensions()
+                }
+            }
         }
+
+        mainHandler.postDelayed({
+            if (!sessionHolder.started) {
+                sessionHolder.started = true
+                session.loadUri(AMO_URL)
+            }
+        }, 200)
+
+        session.navigationDelegate = navigationDelegate
 
         binding.fabManage.setOnClickListener {
             if (childFragmentManager.findFragmentByTag(ExtensionsDialogFragment.TAG) == null) {
@@ -66,6 +97,51 @@ class ExtensionsFragment : Fragment() {
             installGhosteryDirectly()
             true
         }
+    }
+
+    private fun checkAndInstallMissingExtensions() {
+        controller.list().accept({ list ->
+            val installed = (list ?: emptyList())
+            val installedNames = installed.mapNotNull { it.metaData.name?.lowercase() }.toSet()
+
+            // Enable any matching but disabled extensions
+            for (ext in installed) {
+                val name = ext.metaData.name ?: continue
+                for ((display, _) in requiredExtensions) {
+                    if (name.lowercase().contains(display.lowercase()) && !(ext.metaData.enabled)) {
+                        Log.i(TAG, "Enabling existing extension: $name")
+                        try {
+                            controller.enable(ext, WebExtensionController.EnableSource.USER).accept({
+                                Log.i(TAG, "Enabled $name")
+                            }, { err ->
+                                Log.w(TAG, "Failed to enable $name: ${err?.message}")
+                            })
+                        } catch (e: Exception) {
+                            Log.w(TAG, "Exception enabling $name: ${e.message}", e)
+                        }
+                    }
+                }
+            }
+
+            val missingUrls = requiredExtensions.filter { (displayName, url) ->
+                val lower = displayName.lowercase()
+                !installedNames.any { it.contains(lower) }
+            }.map { it.second }
+
+            if (missingUrls.isEmpty()) {
+                Log.i(TAG, "No missing extensions - nothing to install")
+                return@accept
+            }
+
+            Log.i(TAG, "Missing extensions detected, will install ${missingUrls.size} item(s)")
+            val installer = ExtensionInstaller(requireActivity().application as CopilotApplication)
+            installer.installMissingUrls(missingUrls)
+        }, { err ->
+            Log.w(TAG, "Failed to list installed extensions: ${err?.message ?: "unknown"}")
+            val installer = ExtensionInstaller(requireActivity().application as CopilotApplication)
+            val urls = requiredExtensions.map { it.second }
+            installer.installMissingUrls(urls)
+        })
     }
 
     private val navigationDelegate = object : GeckoSession.NavigationDelegate {
@@ -84,8 +160,7 @@ class ExtensionsFragment : Fragment() {
     private fun installGhosteryDirectly() {
         Toast.makeText(context, "Hämtar och installerar Ghostery...", Toast.LENGTH_SHORT).show()
 
-        // HÄR SKA DEN IN (Rad 73) - Ändrad från "https://mozilla.org" till direktlänken
-        val ghosteryXpiUrl = "https://mozilla.org"
+        val ghosteryXpiUrl = "https://addons.mozilla.org/firefox/downloads/file/5122014/ghostery-10.6.8.xpi"
 
         controller.install(ghosteryXpiUrl).then(
             { extension ->
@@ -104,7 +179,6 @@ class ExtensionsFragment : Fragment() {
     }
 
     private var pendingDialog: AlertDialog? = null
-    private val mainHandler = Handler(Looper.getMainLooper())
 
     private val promptDelegate = object : WebExtensionController.PromptDelegate {
         override fun onInstallPromptRequest(
@@ -213,7 +287,6 @@ class ExtensionsFragment : Fragment() {
         controller.promptDelegate = null
         pendingDialog?.dismiss()
         pendingDialog = null
-        mainHandler.removeCallbacksAndMessages(null)
         binding.geckoView.releaseSession()
         _binding = null
         super.onDestroyView()
@@ -221,5 +294,6 @@ class ExtensionsFragment : Fragment() {
 
     companion object {
         private const val AMO_URL = "https://addons.mozilla.org/en-US/firefox/addon"
+        private const val TAG = "ExtensionsFragment"
     }
 }
